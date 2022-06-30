@@ -8,7 +8,7 @@ services:
                 dockerfile: Dockerfile-demoapp
         depends_on:
                 - db
-        command: bash -c 'gunicorn --bind 0.0.0.0:8000 --workers 4 wsgi'
+        command: bash -c 'gunicorn --bind 0.0.0.0:8000 --access-logfile /var/log/access_file_g.log --workers 4 wsgi'
         networks:
             webapp-network:
                 aliases:
