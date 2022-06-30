@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request
 from flask_mysqldb import MySQL
-import logging
 
 app = Flask(__name__, template_folder='./templates/')
 
@@ -22,6 +21,5 @@ def index():
         cur.execute("INSERT INTO MyUsers (FirstName, LastName) VALUES (%s, %s)", (firstName, lastName))
         mysql.connection.commit()
         cur.close()
-        logging.info ('Success')
         return 'success'
     return render_template('index.html')
