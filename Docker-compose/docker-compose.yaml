@@ -1,0 +1,47 @@
+version: '3.1'
+services:
+    demoapp_app:
+        restart: always
+        build:
+                context: .
+                dockerfile: Dockerfile-demoapp
+        depends_on:
+                - db
+        command: bash -c 'gunicorn --bind 0.0.0.0:8000 --access-logfile /var/log/access_file_g.log --workers 4 wsgi'
+        networks:
+            webapp-network:
+                aliases:
+                    - flask-app
+    nginx:
+        image: nginx
+        container_name: flask_nginx
+        restart: always
+        volumes:
+                - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+        ports:
+                - 80:80
+        depends_on:
+                - demoapp_app
+        networks:
+            - webapp-network
+    db:
+        image: mysql:5.7
+        restart: always
+        container_name: demoapp_db
+        command: [--ignore-db-dir=lost+found]
+        ports:
+          - "3306:3306"
+        environment:
+                - MYSQL_USER=demouser
+                - MYSQL_PASSWORD=12345678
+                - MYSQL_DATABASE=demodb
+                - MYSQL_ROOT_PASSWORD=12345678
+        volumes:
+                - flask_volume:/var/lib/mysql
+                - ./db:/docker-entrypoint-initdb.d/:ro
+        networks:
+            - webapp-network
+volumes:
+        flask_volume:
+networks:
+        webapp-network:
