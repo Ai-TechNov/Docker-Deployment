@@ -1,0 +1,16 @@
+version: '3.1'
+services:
+    flask-example:
+        restart: always
+        build:
+                context: .
+                dockerfile: Dockerfile
+        command: bash -c 'python3 run.py'
+        ports:
+                - 80:6969
+        networks:
+            flaskapp-network:
+                aliases:
+                    - flask-app
+networks:
+        flaskapp-network:
